@@ -184,24 +184,18 @@ const calculateServicePrice = ({
     );
   }
 
-  const servicesBasePrice = pricingCalculatorHelper.getServiceBasePrice(
-    [serviceCandidate],
-    selectedYear,
-    selectedServices
-  );
+  const pricingItem =
+    pricingCalculatorHelper.getPricingItemByService(serviceCandidate);
 
-  const servicePriceConsideringDiscounts =
-    pricingCalculatorHelper.getServicePriceConsideringDiscounts(
-      [serviceCandidate],
-      selectedYear,
-      selectedServices
-    );
+  if (!pricingItem) {
+    return {
+      basePrice: 0,
+      calculatedServices: [],
+      finalPrice: 0,
+    };
+  }
 
-  return {
-    basePrice: servicesBasePrice,
-    finalPrice: servicePriceConsideringDiscounts,
-    calculatedServices: [serviceCandidate],
-  };
+  return calculatePricingItem(pricingItem, selectedServices, selectedYear);
 };
 
 export const calculatePrice = (
