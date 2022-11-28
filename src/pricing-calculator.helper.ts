@@ -1,3 +1,4 @@
+import arrayService from "./common/array.service";
 import { pricing } from "./pricing";
 import {
   ServicePricingItem,
@@ -113,16 +114,36 @@ const getServicePriceForGivenYear = (
     ?.value;
 };
 
+const getPricingItemByService = (
+  service: ServiceType
+): ServicePricingItem | undefined => {
+  const pricing = getPricing();
+
+  const pricingPosition = pricing.find((item) =>
+    arrayService.equals(item.services, [service])
+  );
+
+  return pricingPosition;
+};
+
+const getPricingItemByServices = (
+  services: ServiceType[]
+): ServicePricingItem | undefined => {
+  const pricing = getPricing();
+
+  const pricingPosition = pricing.find((item) =>
+    arrayService.equals(item.services, services)
+  );
+
+  return pricingPosition;
+};
+
 const getServicePriceConsideringDiscounts = (
   services: ServiceType[],
   year: ServiceYear,
   allSelectedServices: ServiceType[]
 ): number => {
-  const pricing = getPricing();
-
-  const pricingPosition = pricing.find(
-    (item) => JSON.stringify(item.services) === JSON.stringify(services)
-  );
+  const pricingPosition = getPricingItemByServices(services);
 
   if (!pricingPosition) {
     return 0;
@@ -162,11 +183,7 @@ const getServiceBasePrice = (
   year: ServiceYear,
   allSelectedServices: ServiceType[]
 ): number => {
-  const pricing = getPricing();
-
-  const pricingPosition = pricing.find(
-    (item) => JSON.stringify(item.services) === JSON.stringify(services)
-  );
+  const pricingPosition = getPricingItemByServices(services);
 
   if (!pricingPosition) {
     return 0;
@@ -189,5 +206,6 @@ export const pricingCalculatorHelper = {
   getAvailablePackagesWithGivenService,
   getServicePriceConsideringDiscounts,
   getServiceBasePrice,
+  getPricingItemByService,
   getActivePackageWithGivenService,
 };
